@@ -1,0 +1,49 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}
+Laporan Absensi
+{% endblock %}
+
+{% block additional_css %}
+<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='css/report.css') }}" />
+{% endblock %}
+
+{% block sidebar %}
+<a href="/report" class="active">
+  <i class="bx bxs-file-text icon"></i> Laporan
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2 class="headline">Laporan Absensi</h2>
+  <div class="action-buttons">
+    <a href="{{ url_for('download_report', format='pdf') }}" class="btn">Download PDF</a>
+    <a href="{{ url_for('download_report', format='excel') }}" class="btn">Download Excel</a>
+  </div>
+  <div class="table-responsive">
+    <table class="report-table">
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Nama Karyawan</th>
+          <th>ID Karyawan</th>
+          <th>Waktu Check-in</th>
+          <th>Region</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in report_data %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ row[0] }}</td>
+          <td>{{ row[1] }}</td>
+          <td>{{ row[2] }}</td>
+          <td>{{ row[3] }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

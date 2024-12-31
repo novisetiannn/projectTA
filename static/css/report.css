@@ -1,0 +1,47 @@
+/* report.css */
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.report-table th,
+.report-table td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.report-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.report-table td img {
+  border-radius: 50%;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.btn {
+  background-color: #333;
+  color: white;
+  padding: 10px 15px;
+  text-decoration: none;
+  border-radius: 5px;
+  margin-left: 10px;
+}
+
+.btn:hover {
+  background-color: #555;
+}
+
+.headline {
+  text-align: center; /* Memusatkan teks */
+  margin: 20px 0;    /* Menambahkan margin atas dan bawah */
+}

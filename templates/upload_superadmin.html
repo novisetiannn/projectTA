@@ -1,0 +1,182 @@
+{% extends 'base_superadmin.html' %}
+
+{% block title %}Upload Page{% endblock %}
+
+{% block additional_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/upload.css') }}" />
+<style>
+    .notification {
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        padding: 10px;
+        border-radius: 5px;
+        color: #fff;
+        display: none;
+    }
+    .notification.success {
+        background-color: green;
+    }
+    .notification.error {
+        background-color: red;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="notification" class="notification"></div>
+
+{% if badImage %}
+<script>
+  showNotification("You have uploaded a bad image", "error");
+</script>
+{% endif %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        const notification = document.getElementById("notification");
+        {% for category, message in messages %}
+          showNotification("Localhost says: {{ message }}", "{{ category }}");
+        {% endfor %}
+      });
+    </script>
+  {% endif %}
+{% endwith %}
+
+<div>
+  <h1 class="headline">Masukkan Detail Karyawan</h1>
+
+  <form enctype="multipart/form-data" action="/upload_superadmin" method="POST">
+    <div class="form-group">
+      <label for="name">Nama</label>
+      <input required class="form-field" id="name" name="name" type="text" placeholder="mis. Novi Setiani" />
+    </div>
+
+    <div class="form-group">
+      <label for="roll">ID Karyawan</label>
+      <input required class="form-field" id="roll" name="roll" type="text" placeholder="mis. 123321" />
+    </div>
+
+    <div class="form-group">
+      <label for="region_id">Region</label>
+      <select required class="form-field" id="region_id" name="region_id">
+        <option value="">Pilih Region</option>
+        {% for region in regions %}
+          <option value="{{ region[0] }}">{{ region[1] }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="file-upload">
+      <button class="file-upload-btn" type="button" onclick="document.getElementById('images').click();">
+        Tambah Gambar (Maksimal 10)
+      </button>
+      <input 
+        class="file-upload-input" 
+        type="file" 
+        id="images" 
+        name="images" 
+        multiple 
+        onchange="previewImages(this);" 
+        accept="image/*" />
+      <div class="image-upload-wrap">
+        <h3>Seret dan jatuhkan file atau klik untuk memilih gambar</h3>
+      </div>
+
+      <div id="preview-container" class="file-upload-content">
+        <!-- Pratinjau gambar yang diunggah akan ditampilkan di sini -->
+      </div>
+    </div>
+
+    <div class="camera-capture">
+      <video id="video" width="300" height="200" autoplay></video>
+      <button type="button" onclick="captureImage()">Ambil Gambar</button>
+      <input type="hidden" id="image_data" name="image_data" />
+    </div>
+
+    <button class="button" type="submit">
+      <span class="submit">Unggah</span>
+      <span class="loading"><i class="fa fa-refresh"></i></span>
+      <span class="check"><i class="fa fa-check"></i></span>
+    </button>
+  </form>
+</div>
+
+<script>
+  function showNotification(message, type) {
+    const notification = document.getElementById("notification");
+    notification.textContent = message;
+    notification.className = "notification " + type;
+    notification.style.display = "block";
+    setTimeout(() => notification.style.display = "none", 3000);
+  }
+
+  let capturedImages = [];
+
+  function previewImages(input) {
+    const previewContainer = document.getElementById('preview-container');
+    const existingImages = previewContainer.querySelectorAll('img');
+    const currentFiles = Array.from(input.files);
+    
+    const allFiles = Array.from(existingImages).map(img => img.src).concat(currentFiles.map(file => URL.createObjectURL(file)));
+
+    previewContainer.innerHTML = '';
+
+    if (allFiles.length > 10) {
+      showNotification("Anda dapat mengunggah maksimal 10 gambar.", "error");
+      input.value = '';
+      return;
+    }
+
+    allFiles.forEach((src, index) => {
+      const imgElement = document.createElement('img');
+      imgElement.src = src;
+      imgElement.className = 'file-upload-image';
+      imgElement.alt = `Image ${index + 1}`;
+      imgElement.style.maxWidth = '150px';
+      imgElement.style.margin = '10px';
+      previewContainer.appendChild(imgElement);
+    });
+  }
+
+  function captureImage() {
+    const video = document.getElementById('video');
+    const canvas = document.createElement('canvas');
+    canvas.width = 300;
+    canvas.height = 200;
+    const context = canvas.getContext('2d');
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    const imageData = canvas.toDataURL('image/png');
+    capturedImages.push(imageData);
+
+    document.getElementById('image_data').value = JSON.stringify(capturedImages);
+
+    const imgElement = document.createElement('img');
+    imgElement.src = imageData;
+    imgElement.className = 'file-upload-image';
+    imgElement.style.maxWidth = '150px';
+    imgElement.style.margin = '10px';
+    document.getElementById('preview-container').appendChild(imgElement);
+  }
+
+  document.addEventListener("DOMContentLoaded", function() {
+    const video = document.getElementById('video');
+
+    // Meminta akses ke kamera
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        video.srcObject = stream;
+        video.play();
+      })
+      .catch(err => {
+        console.error("Error accessing camera: ", err);
+        showNotification("Gagal mengakses kamera.", "error");
+      });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,136 @@
+body {
+  font-family: "Lato", sans-serif;
+  background-size: 100vw 100vh;
+  background-attachment: fixed;
+}
+
+.container {
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 50px 10px 0;
+}
+
+.headline {
+  margin-bottom: 30px;
+  color: rgb(75, 126, 156);
+  text-shadow: 2px 8px 6px rgba(0, 0, 0, 0.2),
+               0px -5px 35px rgba(255, 255, 255, 0.3);
+  font-size: 50px;
+  text-align: center;
+}
+
+.date-filter-form {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.date-filter-form label {
+  margin-right: 10px;
+}
+
+.date-filter-form input[type="date"] {
+  padding: 10px;
+  margin-right: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.date-filter-form button {
+  padding: 10px 15px;
+  background-color: #4CAF50; /* Warna hijau */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.date-filter-form button:hover {
+  background-color: #45a049; /* Warna hijau lebih gelap saat hover */
+}
+
+.responsive-table {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.responsive-table li {
+  border-radius: 3px;
+  padding: 25px 30px;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 25px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.responsive-table li:hover {
+  transform: scale(1.02);
+  box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.2);
+}
+
+.responsive-table .table-header {
+  background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #fff;
+  padding: 15px;
+}
+
+.responsive-table .table-row {
+  background-color: #fff;
+  box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.1);
+}
+
+.responsive-table .col {
+  padding: 10px;
+  font-size: 12px;
+  color: #333;
+  word-break: break-word;
+}
+
+.responsive-table .col-1 {
+  flex-basis: 10%;
+}
+
+.responsive-table .col-2 {
+  flex-basis: 20%;
+}
+
+.responsive-table .col-3 {
+  flex-basis: 15%;
+}
+
+.responsive-table .col-4 {
+  flex-basis: 15%;
+}
+
+.responsive-table .col-5 {
+  flex-basis: 15%;
+}
+
+@media all and (max-width: 767px) {
+  .responsive-table .table-header {
+      display: none; /* Sembunyikan header di tampilan kecil */
+  }
+  .responsive-table li {
+      display: block; /* Tampilkan setiap baris sebagai blok */
+      padding: 10px;
+      margin-bottom: 15px;
+  }
+  .responsive-table .col {
+      flex-basis: 100%; /* Kolom mengambil penuh lebar */
+      display: flex;
+      padding: 5px 0;
+  }
+  .responsive-table .col:before {
+      color: #6c7a89;
+      padding-right: 10px;
+      content: attr(data-label); /* Tampilkan label kolom */
+      flex-basis: 50%;
+      text-align: right;
+  }
+}

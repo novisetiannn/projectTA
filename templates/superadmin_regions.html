@@ -1,0 +1,44 @@
+{% extends 'base_superadmin.html' %}
+
+{% block title %}Daftar Region (Superadmin){% endblock %}
+
+{% block content %}
+<h1>Daftar Region (Superadmin)</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <ul class="flashes">
+            {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+
+<form method="POST">
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Nama</th>
+            <th>Aksi</th>
+            <th>Izinkan Absen?</th>
+        </tr>
+        {% for region in regions %}
+        <tr>
+            <td>{{ region[0] }}</td>
+            <td>{{ region[1] }}</td>
+            <td>
+                <form method="POST" action="{{ url_for('deactivate_region_superadmin', id=region[0]) }}">
+                    <button type="submit">Nonaktifkan</button>
+                </form>
+            </td>
+            <td>
+                <input type="checkbox" name="allowed_region" value="{{ region[0] }}" {% if region[2] %}checked{% endif %}>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <button type="submit">Simpan Pengaturan</button>
+</form>
+<a href="{{ url_for('add_superadmin_region') }}">Tambah Region Baru</a>
+{% endblock %}
