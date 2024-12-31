@@ -7,6 +7,27 @@ __pycache__/
 *.env
 venv/
 .env/
-#*.log
+.log
 dist/
 build/
+# Large media files
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.mp3
+*.wav
+
+# Large archive files
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Large image files
+*.psd
+*.tiff
+*.bmp
+app.log
+static/img/loginbg.mp4
+static/img/loginbg-copy.mp4
