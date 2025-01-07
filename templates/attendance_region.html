@@ -1,0 +1,23 @@
+{% extends 'base_karyawan.html' %}
+
+{% block title %}
+Pilih Region - Attendance
+{% endblock %}
+
+{% block content %}
+<main>
+  <h1 class="title">Pilih Region untuk Absensi</h1>
+  <form method="POST" action="{{ url_for('attendance') }}">
+    <div>
+      <label for="region_id">Pilih Region:</label>
+      <select name="region_id" id="region_id" required>
+        <option value="">-- Pilih Region --</option>
+        {% for region in regions %}
+          <option value="{{ region[0] }}">{{ region[1] }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button type="submit">Lanjutkan ke Absensi</button>
+  </form>
+</main>
+{% endblock %}

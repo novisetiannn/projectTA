@@ -1,0 +1,85 @@
+/* table_superadmin.css */
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+}
+
+.container {
+  width: 80%;
+  margin: auto;
+}
+
+.headline {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.search-form {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.search-form input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.search-form button {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.search-form button:hover {
+  background-color: #0056b3;
+}
+
+.table-responsive {
+  margin-top: 20px;
+}
+
+.responsive-table {
+  list-style-type: none;
+  padding: 0;
+}
+
+.table-header, .table-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.table-header {
+  background: #007bff;
+  color: white;
+  font-weight: bold;
+}
+
+.table-row {
+  background: #f9f9f9;
+}
+
+.table-row a {
+  text-decoration: none;
+  color: white; /* Untuk menjaga konsistensi warna link */
+}
+
+.table-row button {
+  margin-left: 10px; /* Spasi antara tombol */
+  cursor: pointer;
+}
+
+.btn-sm {
+  font-size: 0.8rem; /* Ukuran font lebih kecil untuk tombol */
+}

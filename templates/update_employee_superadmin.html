@@ -1,0 +1,22 @@
+{% extends 'base_superadmin.html' %}
+
+{% block title %}
+Edit Karyawan
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Edit Karyawan</h2>
+    <form method="POST">
+        <div>
+            <label for="nama">Nama:</label>
+            <input type="text" id="nama" name="nama" value="{{ karyawan[1] }}" required>
+        </div>
+        <div>
+            <label for="region_id">Region:</label>
+            <input type="text" id="region_id" name="region_id" value="{{ karyawan[11] }}" required>
+        </div>
+        <button type="submit">Simpan</button>
+    </form>
+</div>
+{% endblock %}

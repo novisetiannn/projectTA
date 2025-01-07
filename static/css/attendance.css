@@ -1,0 +1,18 @@
+.video-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw; /* Lebar penuh viewport */
+    height: 100vh; /* Tinggi penuh viewport */
+    background-color: black; /* Warna latar belakang jika video tidak tersedia */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999; /* Pastikan di atas elemen lain */
+}
+
+.videoFrame {
+    width: 100%; /* Mengisi lebar penuh kontainer */
+    height: 100%; /* Mengisi tinggi penuh kontainer */
+    object-fit: cover; /* Pastikan video mengisi area tanpa distorsi */
+}

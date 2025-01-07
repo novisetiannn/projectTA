@@ -1,0 +1,103 @@
+{% extends 'base_karyawan.html' %}
+
+{% block content %}
+<main>
+  <h1 class="title">Attendance</h1>
+
+  <label for="region_id">Select Your Region:</label>
+  <select name="region_id" id="region_id" required>
+    <option value="" disabled selected>Select a region</option>
+    {% for region in regions %}
+    <option value="{{ region[0] }}">{{ region[1] }}</option>
+    {% endfor %}
+  </select>
+
+  <div class="video-container" id="videoContainer" style="display: none;">
+    <img class="videoFrame" id="videoFrame" src="" alt="Video Stream" />
+    <div class="overlay">
+      <div id="current-time"></div>
+      <div id="current-date"></div>
+      <div id="selected-region">Region: {{ selected_region_name }}</div>
+      <div id="employee-name" style="color: white; font-size: 20px; position: absolute; bottom: 10px; left: 10px;">Nama: </div> <!-- Elemen untuk nama karyawan -->
+      <div id="attendance-message"></div> <!-- Untuk menampilkan pesan keberhasilan/kesalahan -->
+    </div>
+  </div>
+</main>
+{% endblock %}
+
+{% block java %}
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    function sendAttendanceData(frameData, regionId, employeeId) {
+      $.ajax({
+        type: "POST",
+        url: "/attendance",
+        data: {
+          frame: frameData,
+          region_id: regionId,
+          employee_id: employeeId,
+        },
+        success: function(response) {
+          console.log("Attendance recorded successfully.", response);
+          document.getElementById('attendance-message').innerText = "Absensi berhasil dicatat.";
+          setTimeout(() => { document.getElementById('attendance-message').innerText = ""; }, 3000);
+        },
+        error: function(error) {
+          console.error("Error recording attendance:", error);
+          document.getElementById('attendance-message').innerText = "Error saat mencatat absensi. Silakan coba lagi.";
+        },
+      });
+    }
+
+    document.getElementById("region_id").addEventListener("change", function() {
+      const selectedRegionId = this.value;
+      const videoContainer = document.getElementById("videoContainer");
+      const videoFrame = document.getElementById("videoFrame");
+      const selectedRegionText = document.getElementById("selected-region");
+
+      if (selectedRegionId) {
+        videoContainer.style.display = "flex";
+        videoFrame.src = "/video/" + selectedRegionId;
+
+        const regionName = this.options[this.selectedIndex].text;
+        selectedRegionText.innerText = `Region: ${regionName}`;
+
+        videoFrame.onerror = function() {
+          console.error("Error loading video stream.");
+          alert("Gagal memuat stream video. Silakan periksa server.");
+        };
+      } else {
+        videoContainer.style.display = "none";
+        videoFrame.src = "";
+      }
+    });
+
+    function detectFaceAndSendAttendance() {
+      const videoFrame = document.getElementById("videoFrame");
+      const regionId = document.getElementById("region_id").value;
+      const employeeId = "{{ employee_id }}";
+      
+      // Ganti dengan metode yang sesuai untuk mendapatkan data frame
+      const frameData = videoFrame.src; 
+
+      if (regionId && frameData) {
+        // Simulasi pengenalan wajah (ganti dengan logika deteksi wajah yang sebenarnya)
+        const employeeName = "Novi Setioni"; // Ganti dengan hasil dari fungsi deteksi wajah
+
+        // Update nama karyawan di overlay
+        document.getElementById('employee-name').innerText = "Nama: " + employeeName;
+
+        sendAttendanceData(frameData, regionId, employeeId);
+      } else {
+        console.warn("Region dan frame harus dipilih sebelum absensi dapat dicatat.");
+      }
+    }
+
+    setInterval(detectFaceAndSendAttendance, 5000);
+  });
+</script>
+{% endblock %}

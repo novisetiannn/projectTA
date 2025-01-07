@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='img/logo.png') }}" />
+    <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+    <title>{% block title %}FaceRec{% endblock %}</title>
+    {% block additional_css %}{% endblock %}
+    <style>
+        /* CSS untuk memastikan video stream mengisi layar penuh */
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw; /* Lebar penuh viewport */
+            height: 100vh; /* Tinggi penuh viewport */
+            background-color: black; /* Warna latar belakang */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999; /* Pastikan di atas elemen lain */
+        }
+
+        .videoFrame {
+            width: 100%; /* Mengisi lebar penuh kontainer */
+            height: 100%; /* Mengisi tinggi penuh kontainer */
+            object-fit: cover; /* Pastikan video mengisi area tanpa distorsi */
+        }
+
+        .overlay {
+            position: absolute;
+            color: white;
+            font-size: 24px;
+            top: 10px;
+            left: 10px;
+            z-index: 1000; /* Pastikan di atas video */
+            background-color: rgba(0, 0, 0, 0.5); /* Tambahkan latar belakang semi-transparan */
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- MAIN CONTENT -->
+    {% block content %}
+    <div class="video-container" style="display: none;">
+        <img src="{{ url_for('video', region_id=1) }}" alt="Video Stream" />
+        <div class="overlay">
+            <div id="current-time"></div>
+            <div id="current-date"></div>
+            <div id="selected-region">Region: {{ selected_region_name }}</div>
+        </div>
+    </div>
+    {% endblock %}
+    <!-- MAIN CONTENT -->
+
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Fungsi untuk memperbarui waktu saat ini dan tanggal
+            function updateTime() {
+                const now = new Date();
+                const optionsTime = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+                const optionsDate = { year: 'numeric', month: '2-digit', day: '2-digit' };
+                const timeString = now.toLocaleTimeString([], optionsTime);
+                const dateString = now.toLocaleDateString([], optionsDate);
+        
+                console.log('Updating time and date'); // Debugging
+                console.log('Time:', timeString); // Debugging
+                console.log('Date:', dateString); // Debugging
+        
+                const timeElement = document.getElementById('current-time');
+                const dateElement = document.getElementById('current-date');
+        
+                // Cek apakah elemen ada sebelum mencoba mengubah innerText
+                if (timeElement) {
+                    timeElement.innerText = `Time: ${timeString}`;
+                } else {
+                    console.error('Time element not found!'); // Debugging jika elemen tidak ditemukan
+                }
+        
+                if (dateElement) {
+                    dateElement.innerText = `Date: ${dateString}`;
+                } else {
+                    console.error('Date element not found!'); // Debugging jika elemen tidak ditemukan
+                }
+            }
+        
+            // Update waktu setiap detik
+            setInterval(updateTime, 1000);
+            updateTime(); // Panggil sekali untuk inisialisasi
+        });
+    </script>
+    {% block java %}{% endblock %}
+</body>
+</html>

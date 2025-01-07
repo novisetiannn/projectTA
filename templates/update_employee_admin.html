@@ -1,0 +1,16 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}
+Update Karyawan
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2 class="headline">Update Karyawan</h2>
+  <form action="{{ url_for('update_employee_admin', id_karyawan=employee_data[0]) }}" method="POST">
+    <label for="name">Nama Karyawan:</label>
+    <input type="text" id="name" name="name" value="{{ employee_data[1] }}" required />
+    <button type="submit">Simpan</button>
+  </form>
+</div>
+{% endblock %}

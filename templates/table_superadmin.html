@@ -1,0 +1,57 @@
+{% extends 'base_superadmin.html' %}
+
+{% block title %}
+Attendance Record
+{% endblock %}
+
+{% block additional_css %}
+<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='css/table_superadmin.css') }}" />
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2 class="headline">Attendance Record</h2>
+
+  <!-- Form untuk filter tanggal dan region -->
+  <form action="{{ url_for('table_superadmin') }}" method="GET" class="date-filter-form">
+    <label for="region">Pilih Region:</label>
+    <select id="region" name="region" required>
+      <option value="">-- Pilih Region --</option>
+      <option value="1">Region 1</option>
+      <option value="2">Region 2</option>
+      <option value="3">Region 3</option>
+      <option value="4">Region 4</option>
+      <option value="5">Region 5</option>
+    </select>
+    
+    <label for="start_date">Dari Tanggal:</label>
+    <input type="date" id="start_date" name="start_date" required>
+    
+    <label for="end_date">Sampai Tanggal:</label>
+    <input type="date" id="end_date" name="end_date" required>
+    
+    <button type="submit">Filter</button>
+  </form>
+
+  <div class="table-responsive">
+    <ul class="responsive-table">
+      <li class="table-header">
+        <div class="col col-1">No</div>
+        <div class="col col-2">Nama</div>
+        <div class="col col-3">ID Karyawan</div>
+        <div class="col col-4">Check-in Time</div>
+        <div class="col col-5">Region</div>
+      </li>
+      {% for row in data %}
+      <li class="table-row">
+        <div class="col col-1" data-label="No">{{ loop.index }}</div>
+        <div class="col col-2" data-label="Nama">{{ row[0] }}</div>
+        <div class="col col-3" data-label="ID Karyawan">{{ row[1] }}</div>
+        <div class="col col-4" data-label="Check-in Time">{{ row[2]  }}</div>
+        <div class="col col-5" data-label="Region">{{ row[4]  }}</div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}
