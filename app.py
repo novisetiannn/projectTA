@@ -1,10 +1,10 @@
 from flask import Flask
 from models import db
 from utils.encoding_wajah_dikenal import load_known_faces
-from controllers.contorllers_add_admin import add_adm
-from controllers.controllers_add_region_admin import add_region_admin
-from controllers.controllers_add_region_sadmin import add_sadmin_region
-from controllers.controllers_attendance import absen_attendance
+from controllers.contorllers_add_admin import add_adm as add_adm_bp
+from controllers.controllers_add_region_admin import add_region_admin_bp
+from controllers.controllers_add_region_sadmin import add_sadmin_region_bp
+from controllers.controllers_attendance import attendance_bp
 from controllers.controllers_dashboard_admin import dashboardadmin
 from controllers.controllers_dashboard_sadmin import sadmin_dashboard
 from controllers.controllers_deactivate_region_admin import deact_region_admin
@@ -41,10 +41,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
 db.init_app(app)
-app.register_blueprint(add_adm)
-app.register_blueprint(add_region_admin)
-app.register_blueprint(add_sadmin_region)
-app.register_blueprint(absen_attendance)
+app.register_blueprint(add_adm_bp)
+app.register_blueprint(add_region_admin_bp)
+app.register_blueprint(add_sadmin_region_bp)
+app.register_blueprint(attendance_bp)
 app.register_blueprint(dashboardadmin)
 app.register_blueprint(sadmin_dashboard)
 app.register_blueprint(deact_region_admin)
