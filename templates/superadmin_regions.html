@@ -28,7 +28,7 @@
             <td>{{ region[0] }}</td>
             <td>{{ region[1] }}</td>
             <td>
-                <form method="POST" action="{{ url_for('deactivate_region_superadmin', id=region[0]) }}">
+                <form method="POST" action="{{ url_for('deact_region_sadmin.deactivate_region_superadmin_view', id=region[0]) }}">
                     <button type="submit">Nonaktifkan</button>
                 </form>
             </td>
@@ -40,5 +40,5 @@
     </table>
     <button type="submit">Simpan Pengaturan</button>
 </form>
-<a href="{{ url_for('add_superadmin_region') }}">Tambah Region Baru</a>
+<a href="{{ url_for('update_region_admin.admin_regions_view') }}">Tambah Region Baru</a>
 {% endblock %}

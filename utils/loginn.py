@@ -20,21 +20,22 @@ def login():
                 session['username'] = username
                 session['role'] = role
 
-                cursor.close()
-                db_conn.close()
-
                 # Redirect berdasarkan role
                 if role == 'admin':
                     return redirect('/admin_dashboard')
                 elif role == 'super_admin':
                     return redirect('/super_admin_dashboard')
-            else:
-                cursor.close()
-                db_conn.close()
-                flash("Invalid username or password.", "danger")
-                return render_template('login.html', error_message='Invalid username or password')
+
+            # Jika username atau password salah
+            flash("Invalid username or password.", "danger")
+            return render_template('login.html', error_message='Invalid username or password')
+        
         except Exception as e:
             logging.error(f"Database connection error during login: {e}")
             return render_template('login.html', error_message='Database connection error')
+        
+        finally:
+            cursor.close()  # Pastikan cursor ditutup
+            db_conn.close()  # Pastikan koneksi ditutup
 
     return render_template('login.html')

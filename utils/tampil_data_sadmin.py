@@ -22,10 +22,12 @@ def tampil_data_superadmin():
             cursor.execute("SELECT * FROM employee ORDER BY tgl_create DESC")
         
         data_list = cursor.fetchall()
+        
     except Exception as e:
         logging.error(f"Error fetching employee data for superadmin: {e}")
+        
     finally:
-        cursor.close()
-        db_conn.close()
+        cursor.close()  # Pastikan cursor ditutup
+        db_conn.close()  # Pastikan koneksi ditutup
 
     return render_template('tampil_data_superadmin.html', data_list=data_list)

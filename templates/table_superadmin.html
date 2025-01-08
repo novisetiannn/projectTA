@@ -13,7 +13,7 @@ Attendance Record
   <h2 class="headline">Attendance Record</h2>
 
   <!-- Form untuk filter tanggal dan region -->
-  <form action="{{ url_for('table_superadmin') }}" method="GET" class="date-filter-form">
+  <form action="{{ url_for('tb_sadmin.table_superadmin_view') }}" method="GET" class="date-filter-form">
     <label for="region">Pilih Region:</label>
     <select id="region" name="region" required>
       <option value="">-- Pilih Region --</option>

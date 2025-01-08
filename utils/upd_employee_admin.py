@@ -3,8 +3,6 @@ from database import get_db_connection
 import logging
 
 def update_employee_admin(id_karyawan):
-    global current_employee_name_admin
-
     if request.method == 'POST':
         new_name = request.form['name']
         try:
@@ -19,11 +17,10 @@ def update_employee_admin(id_karyawan):
             """, (new_name, update_by, id_karyawan))
             db_conn.commit()
 
-            current_employee_name_admin = new_name  # Perbarui nama
-
         except Exception as e:
             logging.error(f"Error updating employee name: {e}")
-            return "An error occurred while updating the data.", 500
+            flash('An error occurred while updating the data.', 'error')
+            return redirect(url_for('tampil_data_admin'))  # Redirect after error
 
         finally:
             cursor.close()
@@ -44,7 +41,8 @@ def update_employee_admin(id_karyawan):
 
     except Exception as e:
         logging.error(f"Error fetching employee data for update: {e}")
-        return "An error occurred while fetching data for the update.", 500
+        flash('An error occurred while fetching data for the update.', 'error')
+        return redirect(url_for('tampil_data_admin'))
 
     finally:
         cursor.close()

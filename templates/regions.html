@@ -28,7 +28,7 @@
             <td>{{ region[0] }}</td>
             <td>{{ region[1] }}</td>
             <td>
-                <form method="POST" action="{{ url_for('deactivate_region_admin', id=region[0]) }}">
+                <form method="POST" action="{{ url_for('deact_region_admin.deactivate_region_admin_view', id=region[0]) }}">
                     <button type="submit">Nonaktifkan</button>
                 </form>
             </td>
@@ -40,5 +40,5 @@
     </table>
     <button type="submit">Simpan Pengaturan</button>
 </form>
-<a href="{{ url_for('add_region') }}">Tambah Region Baru</a>
+<a href="{{ url_for('add_region_admin.add_region_controller') }}">Tambah Region Baru</a>
 {% endblock %}

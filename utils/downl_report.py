@@ -1,9 +1,8 @@
-from flask import request, render_template, send_file, app
+from flask import request, render_template, send_file, current_app
 from database import get_db_connection
 import pdfkit
 import tempfile
 import pandas as pd
-
 
 def download_report():
     format_type = request.args.get('format')
@@ -49,5 +48,5 @@ def download_report():
             return "Format tidak valid", 400
 
     except Exception as e:
-        app.logger.error(f"Error generating report: {e}")
+        current_app.logger.error(f"Error generating report: {e}")
         return "Terjadi kesalahan saat membuat laporan", 500

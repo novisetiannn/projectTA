@@ -21,7 +21,7 @@ def upload_superadmin():
         # Validasi input
         if total_images == 0 or not (1 <= total_images <= 10) or not name or not roll or not region_id:
             flash("Validasi gagal. Pastikan minimal 1 gambar diunggah atau ditangkap, dan tidak lebih dari 10 gambar total.", "error")
-            return redirect(url_for('upload_superadmin'))
+            return redirect(url_for('upd_sadmin.upload_superadmin_view'))
 
         newEncode = None
         saved_files = []
@@ -40,7 +40,7 @@ def upload_superadmin():
                         img_bytes = base64.b64decode(img_data)
                     except Exception as e:
                         flash("Gagal mendekode gambar yang ditangkap.", "error")
-                        return redirect(url_for('upload_superadmin'))
+                        return redirect(url_for('upd_sadmin.upload_superadmin_view'))
 
                     image_path = os.path.join('./Train/', f"{name}_{roll}_captured_{len(saved_files)}.jpg")
                     with open(image_path, 'wb') as f:
@@ -51,7 +51,7 @@ def upload_superadmin():
                     if newImg is None or not face_recognition.face_encodings(cv2.cvtColor(newImg, cv2.COLOR_BGR2RGB)):
                         os.remove(image_path)
                         flash("Gambar yang ditangkap tidak valid. Tidak ada wajah terdeteksi.", "error")
-                        return redirect(url_for('upload_superadmin'))
+                        return redirect(url_for('upd_sadmin.upload_superadmin_view'))
 
                     face_encodings = face_recognition.face_encodings(cv2.cvtColor(newImg, cv2.COLOR_BGR2RGB))
                     newEncode = face_encodings[0]
@@ -61,7 +61,7 @@ def upload_superadmin():
             saved_files_pg = "{" + ",".join([f'"{file_path}"' for file_path in saved_files]) + "}"
             if save_to_database(name, roll, newEncode, saved_files_pg, region_id):
                 flash("Upload berhasil!", "success")
-                return redirect(url_for('upload_superadmin'))
+                return redirect(url_for('upd_sadmin.upload_superadmin_view'))
             else:
                 flash("Gagal menyimpan ke database.", "error")
 

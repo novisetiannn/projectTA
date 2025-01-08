@@ -13,10 +13,10 @@ endblock %} {% block additional_css %}
 <div class="container">
   <h2 class="headline">Laporan Absensi</h2>
   <div class="action-buttons">
-    <a href="{{ url_for('download_report', format='pdf') }}" class="btn"
+    <a href="{{ url_for('downl_report.download_report_view', format='pdf') }}" class="btn"
       >Download PDF</a
     >
-    <a href="{{ url_for('download_report', format='excel') }}" class="btn"
+    <a href="{{ url_for('downl_report.download_report_view', format='excel') }}" class="btn"
       >Download Excel</a
     >
   </div>

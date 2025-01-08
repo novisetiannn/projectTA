@@ -1,7 +1,7 @@
 from flask import session, redirect, render_template, url_for
 from database import get_db_connection
 
-def super_admin_dashboard():
+def render_super_admin_dashboard():
     if 'username' not in session or session.get('role') != 'super_admin':
         return redirect(url_for('login'))
 
@@ -16,8 +16,8 @@ def super_admin_dashboard():
     cursor.execute("SELECT COUNT(*) FROM users WHERE role = 'admin'")
     total_admin = cursor.fetchone()[0]
 
-    # Mengambil data pengguna terbaru berdasarkan ID atau kolom lain yang ada
-    cursor.execute("SELECT * FROM users ORDER BY id DESC LIMIT 10")  # Ganti 'id' dengan kolom yang sesuai
+    # Mengambil data pengguna terbaru
+    cursor.execute("SELECT * FROM users ORDER BY id DESC LIMIT 10")
     users = cursor.fetchall()
 
     cursor.close()

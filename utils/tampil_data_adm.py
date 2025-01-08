@@ -2,10 +2,10 @@ from flask import request, render_template
 from database import get_db_connection
 import logging
 
-def tampil_data_admin():
+def fetch_admin_data():
     search_query = request.args.get('search', '')  # Ambil kata kunci pencarian dari URL
     data_list = []
-    
+
     try:
         db_conn = get_db_connection()
         cursor = db_conn.cursor()
@@ -28,10 +28,10 @@ def tampil_data_admin():
 
     except Exception as e:
         logging.error(f"Error fetching employee data for admin: {e}")
-        return "Terjadi kesalahan dalam mengambil data.", 500
+        return None, str(e)
 
     finally:
         cursor.close()
         db_conn.close()
 
-    return render_template('tampil_data_admin.html', data_list=data_list)
+    return data_list, None

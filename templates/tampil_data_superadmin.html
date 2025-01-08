@@ -19,7 +19,7 @@ Tampil Data
   <h2 class="headline">Data Karyawan</h2>
 
   <!-- Form Pencarian -->
-  <form method="GET" action="{{ url_for('tampil_data_superadmin') }}" class="search-form">
+  <form method="GET" action="{{ url_for('tampil_data_sadmin.tampil_data_superadmin_view') }}" class="search-form">
     <input type="text" name="query" placeholder="Cari berdasarkan nama karyawan" value="{{ request.args.get('query', '') }}" />
     <button type="submit">Cari</button>
   </form>
@@ -46,7 +46,7 @@ Tampil Data
           <div class="col col-6" data-label="Tgl Create">{{ row[5] }}</div>
           <div class="col col-7" data-label="Create by">{{ row[6] }}</div>
           <div class="col col-8" data-label="Aksi">
-            <a href="{{ url_for('update_employee_superadmin', id_karyawan=row[0]) }}" class="btn btn-warning btn-sm">Edit</a>
+            <a href="{{ url_for('update_employee_sadmin.update_employee_superadmin_view', id_karyawan=row[0]) }}" class="btn btn-warning btn-sm">Edit</a>
             <form action="{{ url_for('hapus_karyawan', id_karyawan=row[0]) }}" method="POST" style="display:inline;">
                 <button type="submit" class="btn btn-danger btn-sm ml-2">Hapus</button>
             </form>
