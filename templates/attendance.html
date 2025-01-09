@@ -4,6 +4,7 @@
 <main>
   <h1 class="title">Attendance</h1>
 
+  <!-- Dropdown untuk memilih region -->
   <label for="region_id">Select Your Region:</label>
   <select name="region_id" id="region_id" required>
     <option value="" disabled selected>Select a region</option>
@@ -12,14 +13,15 @@
     {% endfor %}
   </select>
 
+  <!-- Container untuk video streaming -->
   <div class="video-container" id="videoContainer" style="display: none;">
     <img class="videoFrame" id="videoFrame" src="" alt="Video Stream" />
     <div class="overlay">
       <div id="current-time"></div>
       <div id="current-date"></div>
-      <div id="selected-region">Region: {{ selected_region_name }}</div>
-      <div id="employee-name" style="color: white; font-size: 20px; position: absolute; bottom: 10px; left: 10px;">Nama: </div> <!-- Elemen untuk nama karyawan -->
-      <div id="attendance-message"></div> <!-- Untuk menampilkan pesan keberhasilan/kesalahan -->
+      <div id="selected-region">Region: Not selected</div>
+      <div id="employee-name" style="color: white; font-size: 20px; position: absolute; bottom: 10px; left: 10px;"></div>
+      <div id="attendance-message" style="color: red; font-size: 18px; position: absolute; top: 10px; left: 10px;"></div>
     </div>
   </div>
 </main>
@@ -33,6 +35,11 @@
 <script>
   document.addEventListener("DOMContentLoaded", function() {
     function sendAttendanceData(frameData, regionId, employeeId) {
+      if (!regionId || !frameData) {
+        console.warn("Region ID atau frame data tidak valid.");
+        return;
+      }
+      
       $.ajax({
         type: "POST",
         url: "/attendance",
@@ -43,12 +50,18 @@
         },
         success: function(response) {
           console.log("Attendance recorded successfully.", response);
-          document.getElementById('attendance-message').innerText = "Absensi berhasil dicatat.";
-          setTimeout(() => { document.getElementById('attendance-message').innerText = ""; }, 3000);
+          const messageElem = document.getElementById('attendance-message');
+          if (messageElem) {
+            messageElem.innerText = "Absensi berhasil dicatat.";
+            setTimeout(() => { messageElem.innerText = ""; }, 3000);
+          }
         },
         error: function(error) {
           console.error("Error recording attendance:", error);
-          document.getElementById('attendance-message').innerText = "Error saat mencatat absensi. Silakan coba lagi.";
+          const messageElem = document.getElementById('attendance-message');
+          if (messageElem) {
+            messageElem.innerText = "Error saat mencatat absensi. Silakan coba lagi.";
+          }
         },
       });
     }
@@ -64,7 +77,9 @@
         videoFrame.src = "/video/" + selectedRegionId;
 
         const regionName = this.options[this.selectedIndex].text;
-        selectedRegionText.innerText = `Region: ${regionName}`;
+        if (selectedRegionText) {
+          selectedRegionText.innerText = `Region: ${regionName}`;
+        }
 
         videoFrame.onerror = function() {
           console.error("Error loading video stream.");
@@ -73,6 +88,9 @@
       } else {
         videoContainer.style.display = "none";
         videoFrame.src = "";
+        if (selectedRegionText) {
+          selectedRegionText.innerText = "Region: Not selected";
+        }
       }
     });
 
@@ -80,24 +98,32 @@
       const videoFrame = document.getElementById("videoFrame");
       const regionId = document.getElementById("region_id").value;
       const employeeId = "{{ employee_id }}";
-      
-      // Ganti dengan metode yang sesuai untuk mendapatkan data frame
-      const frameData = videoFrame.src; 
 
-      if (regionId && frameData) {
-        // Simulasi pengenalan wajah (ganti dengan logika deteksi wajah yang sebenarnya)
-        const employeeName = "Novi Setioni"; // Ganti dengan hasil dari fungsi deteksi wajah
-
-        // Update nama karyawan di overlay
-        document.getElementById('employee-name').innerText = "Nama: " + employeeName;
-
-        sendAttendanceData(frameData, regionId, employeeId);
-      } else {
+      if (!videoFrame || !regionId) {
         console.warn("Region dan frame harus dipilih sebelum absensi dapat dicatat.");
+        return;
       }
+
+      // Capture frame data from video
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+      canvas.width = videoFrame.width || 640;
+      canvas.height = videoFrame.height || 480;
+      context.drawImage(videoFrame, 0, 0, canvas.width, canvas.height);
+      const frameData = canvas.toDataURL("image/png");
+
+      // Simulasi pengenalan wajah
+      const employeeName = ""; // Ganti dengan hasil dari fungsi deteksi wajah
+      const employeeNameElem = document.getElementById('employee-name');
+      if (employeeNameElem) {
+        employeeNameElem.innerText = "Nama: " + employeeName;
+      }
+
+      sendAttendanceData(frameData, regionId, employeeId);
     }
 
-    setInterval(detectFaceAndSendAttendance, 5000);
+    // Interval untuk deteksi wajah
+    setInterval(detectFaceAndSendAttendance, 10000); // Interval 10 detik
   });
 </script>
 {% endblock %}

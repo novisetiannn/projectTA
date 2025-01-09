@@ -1,6 +1,7 @@
 from database import get_db_connection
 import pickle
 import logging
+from utils.known_faces import Known_employee_encodings, Known_employee_names, Known_employee_rolls
 
 #fungsi untuk Memuat encoding wajah yang dikenal dari database untuk digunakan dalam pengenalan wajah.
 def load_known_faces():

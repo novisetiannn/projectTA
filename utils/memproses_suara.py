@@ -1,6 +1,7 @@
 import playsound
 from gtts import gTTS
 import os
+from utils.inisialisasi_antrian_suara import speech_queue
 
 # Fungsi untuk memproses suara dari antrian menggunakan gTTS dan playsound
 def speak_from_queue(speech_queue):

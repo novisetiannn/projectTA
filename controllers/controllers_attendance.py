@@ -6,7 +6,6 @@ from utils.g_region import get_regions
 attendance_bp = Blueprint('attendance', __name__)
 
 @attendance_bp.route('/attendance', methods=['GET', 'POST'])
-@role_required(['admin', 'super_admin'])
 def attendance_controller():
     if request.method == 'POST':
         return process_attendance(request)

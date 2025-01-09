@@ -8,6 +8,7 @@ from utils.employee_active import is_employee_active
 from utils.get_region import get_region_allowed
 from utils.periksa_wajah_sesuai_region import is_face_in_correct_region
 from utils.waktu_terakhir_absen import get_last_absence_time
+from utils.inisialisasi_antrian_suara import speech_queue, error_announced, error_timestamp
 
 def generate_marked_frames(selected_region_id):
     global speech_queue, error_announced, error_timestamp

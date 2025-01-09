@@ -1,4 +1,13 @@
 from flask import Flask
+
+#ini nanti di app.py
+app = Flask(__name__)
+# Atur ukuran maksimal (contoh: 50 MB)
+app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50 MB
+app.secret_key = 'supersecretkey'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:2655@localhost:5432/attendancedbb'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 from models import db
 from utils.encoding_wajah_dikenal import load_known_faces
 from controllers.contorllers_add_admin import add_adm as add_adm_bp
@@ -30,15 +39,6 @@ from controllers.controllers_update_region_sadmin import update_region_sadmin
 from controllers.controllers_upload_admin import upd_admin
 from controllers.controllers_upload_sadmin import upd_sadmin
 from controllers.controllers_video import videoAttendance
-
-#ini nanti di app.py
-app = Flask(__name__)
-# Atur ukuran maksimal (contoh: 50 MB)
-app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50 MB
-app.secret_key = 'supersecretkey'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:2655@localhost:5432/attendancedbb'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 
 db.init_app(app)
 app.register_blueprint(add_adm_bp)
