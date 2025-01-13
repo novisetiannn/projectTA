@@ -1,6 +1,5 @@
 from database import get_db_connection
 import logging
-import datetime
 from datetime import datetime, timedelta
 
 def bisa_absen_lagi(roll, region_id):
