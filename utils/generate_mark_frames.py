@@ -20,6 +20,11 @@ def generate_marked_frames(selected_region_id):
     frame_count = 0
     processed_employees = set()  # Menyimpan nama yang sudah diproses untuk speech
 
+    # Cek apakah kamera terbuka
+    if not camera.isOpened():
+        logging.error("Kamera tidak dapat dibuka.")
+        return
+
     while True:
         success, frame = camera.read()
         if not success or frame is None or frame.size == 0:
@@ -91,12 +96,10 @@ def generate_marked_frames(selected_region_id):
                         # Cek apakah karyawan sudah absen dalam durasi blokir terakhir di region ini
                         last_absence_time = get_last_absence_time(roll, selected_region_id)
                         if last_absence_time and (datetime.now() - last_absence_time).total_seconds() < blocking_duration * 60:
-                            # Jika sudah absen dalam durasi blokir terakhir dan belum diproses
                             if roll not in processed_employees:
                                 speech_queue.put("Akses diterima, terimakasih.")
-                                processed_employees.add(roll)  # Tandai sudah diproses
+                                processed_employees.add(roll)
                         else:
-                            # Jika belum absen dalam durasi blokir
                             cursor.execute(
                                 "INSERT INTO absensi (nama, id_karyawan, check_in, photo, region_id) VALUES (%s, %s, NOW(), %s, %s)", 
                                 (display_name, roll, photo_filename, selected_region_id)

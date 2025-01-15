@@ -2,7 +2,6 @@ from flask import Flask
 
 #ini nanti di app.py
 app = Flask(__name__)
-# Atur ukuran maksimal (contoh: 50 MB)
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50 MB
 app.secret_key = 'supersecretkey'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:2655@localhost:5432/attendancedbb'
