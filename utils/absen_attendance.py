@@ -1,4 +1,4 @@
-from flask import flash, render_template, redirect, url_for
+from flask import flash, render_template, redirect, url_for, session
 import logging
 import base64
 import cv2
@@ -12,13 +12,17 @@ from utils.g_region import get_regions
 from utils.inisialisasi_antrian_suara import speech_queue
 
 def process_attendance(request):
-    global error_announced, region_mismatch_alerted, unknown_face_alerted
+    # Cek dan atur session untuk mencegah pengumuman yang berulang
+    error_announced = session.get('error_announced', False)
+    region_mismatch_alerted = session.get('region_mismatch_alerted', False)
+    unknown_face_alerted = session.get('unknown_face_alerted', False)
 
     if request.method == 'POST':
         # Ambil data dari permintaan
         frame_data = request.form.get('frame')
         region_id = request.form.get('region_id')
         employee_id = request.form.get('employee_id')
+        region_mismatch_alerted = False  # Reset untuk setiap permintaan baru
 
         # Validasi input
         if not frame_data:
@@ -54,6 +58,7 @@ def process_attendance(request):
             if not unknown_face_alerted:
                 speech_queue.put("Wajah tidak dikenali, silahkan coba lagi.")
                 unknown_face_alerted = True
+                logging.info("Memasukkan pesan ke dalam speech_queue: Wajah tidak dikenali, silahkan coba lagi.")
             return render_template('attendance.html', message="Wajah tidak dikenali.")
 
         if not is_employee_active(roll):
@@ -62,26 +67,22 @@ def process_attendance(request):
 
         # Ambil durasi blokir absensi dari pengaturan global
         try:
-            db_conn = get_db_connection()
-            cursor = db_conn.cursor()
-            
-            cursor.execute("""
-                SELECT setting_value 
-                FROM global_settings 
-                WHERE setting_key = 'blocking_duration_minutes'
-            """)
-            blocking_duration_result = cursor.fetchone()
-            if blocking_duration_result:
-                blocking_duration = int(blocking_duration_result[0])
-            else:
-                logging.error("Durasi blokir absensi tidak ditemukan. Gunakan nilai default 10 menit.")
-                blocking_duration = 10  # Default fallback
+            with get_db_connection() as db_conn:
+                with db_conn.cursor() as cursor:
+                    cursor.execute("""
+                        SELECT setting_value 
+                        FROM global_settings 
+                        WHERE setting_key = 'blocking_duration_minutes'
+                    """)
+                    blocking_duration_result = cursor.fetchone()
+                    if blocking_duration_result:
+                        blocking_duration = int(blocking_duration_result[0])
+                    else:
+                        logging.error("Durasi blokir absensi tidak ditemukan. Gunakan nilai default 10 menit.")
+                        blocking_duration = 10  # Default fallback
         except Exception as e:
             logging.error(f"Error saat mengambil durasi blokir: {e}")
             blocking_duration = 10  # Default fallback
-        finally:
-            cursor.close()
-            db_conn.close()
 
         # Cek absensi
         if not bisa_absen_lagi(roll, region_id, blocking_duration):
@@ -89,6 +90,7 @@ def process_attendance(request):
             if not error_announced:
                 speech_queue.put(f"Anda sudah absen dalam {blocking_duration} menit terakhir di region ini.")
                 error_announced = True
+                logging.info(f"Memasukkan pesan ke dalam speech_queue: Anda sudah absen dalam {blocking_duration} menit terakhir di region ini.")
             return render_template('attendance.html', message=f"Anda sudah absen dalam {blocking_duration} menit terakhir di region ini.")
         
         if not is_valid_region(roll, region_id):
@@ -96,6 +98,7 @@ def process_attendance(request):
             if not region_mismatch_alerted:
                 speech_queue.put("Wilayah tidak sesuai, silahkan coba di region lain.")
                 region_mismatch_alerted = True
+                logging.info("Memasukkan pesan ke dalam speech_queue: Wilayah tidak sesuai, silahkan coba di region lain.")
             return render_template('attendance.html', message="Wilayah tidak sesuai.")
 
         # Simpan data absensi
@@ -120,6 +123,7 @@ def process_attendance(request):
                     if not error_announced:
                         speech_queue.put("Berhasil.")
                         error_announced = True
+                        logging.info("Memasukkan pesan ke dalam speech_queue: Berhasil.")
 
         except psycopg2.Error as e:
             logging.error(f"PostgreSQL error saat menyimpan data absensi: {e}")
@@ -127,6 +131,11 @@ def process_attendance(request):
         except Exception as e:
             logging.error(f"Error tidak terduga saat memproses absensi: {e}")
             return render_template('attendance.html', message="Terjadi kesalahan saat memproses absensi.")
+
+        # Simpan status variabel ke session agar pengumuman tidak berulang
+        session['error_announced'] = error_announced
+        session['region_mismatch_alerted'] = region_mismatch_alerted
+        session['unknown_face_alerted'] = unknown_face_alerted
 
     # Render halaman jika metode GET
     regions = get_regions()

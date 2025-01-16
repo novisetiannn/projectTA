@@ -1,6 +1,6 @@
 import cv2
 import logging
-import datetime
+import datetime 
 from database import get_db_connection
 from utils.mendeteksi_mengenali_frame import recognize_faces
 from utils.latest_employee import get_latest_employee_name
@@ -12,7 +12,7 @@ from utils.inisialisasi_antrian_suara import speech_queue, error_announced, erro
 
 def generate_marked_frames(selected_region_id):
     global speech_queue, error_announced, error_timestamp
-    camera = cv2.VideoCapture(0)
+    camera = cv2.VideoCapture(0, cv2.CAP_DSHOW)
     recognized_names = set()
     unknown_face_alerted = False
     region_mismatch_alerted = False

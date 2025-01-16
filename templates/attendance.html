@@ -22,6 +22,9 @@
       <div id="selected-region">Region: Not selected</div>
       <div id="employee-name" style="color: white; font-size: 20px; position: absolute; bottom: 10px; left: 10px;"></div>
       <div id="attendance-message" style="color: red; font-size: 18px; position: absolute; top: 10px; left: 10px;"></div>
+      <div id="loading-indicator" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white;">
+        Loading...
+      </div>
     </div>
   </div>
 </main>
@@ -33,13 +36,31 @@
 <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
+  document.addEventListener("DOMContentLoaded", function () {
+    let detectInterval;
+
     function sendAttendanceData(frameData, regionId, employeeId) {
       if (!regionId || !frameData) {
         console.warn("Region ID atau frame data tidak valid.");
         return;
       }
-      
+
+      // Validasi ukuran data frame
+      const maxSizeBytes = 2 * 1024 * 1024; // 2MB maksimum
+      const frameSize = atob(frameData.split(",")[1]).length;
+
+      if (frameSize > maxSizeBytes) {
+        console.error("Frame terlalu besar untuk dikirim ke server.");
+        const messageElem = document.getElementById('attendance-message');
+        if (messageElem) {
+          messageElem.innerText = "Ukuran frame terlalu besar, silakan coba lagi.";
+        }
+        return;
+      }
+
+      const loadingElem = document.getElementById('loading-indicator');
+      if (loadingElem) loadingElem.style.display = 'block';
+
       $.ajax({
         type: "POST",
         url: "/attendance",
@@ -48,7 +69,7 @@
           region_id: regionId,
           employee_id: employeeId,
         },
-        success: function(response) {
+        success: function (response) {
           console.log("Attendance recorded successfully.", response);
           const messageElem = document.getElementById('attendance-message');
           if (messageElem) {
@@ -56,17 +77,24 @@
             setTimeout(() => { messageElem.innerText = ""; }, 3000);
           }
         },
-        error: function(error) {
+        error: function (error) {
           console.error("Error recording attendance:", error);
           const messageElem = document.getElementById('attendance-message');
           if (messageElem) {
-            messageElem.innerText = "Error saat mencatat absensi. Silakan coba lagi.";
+            if (error.status === 413) {
+              messageElem.innerText = "Data terlalu besar untuk diproses. Silakan kompresi ulang frame.";
+            } else {
+              messageElem.innerText = "Error saat mencatat absensi. Silakan coba lagi.";
+            }
           }
         },
+        complete: function () {
+          if (loadingElem) loadingElem.style.display = 'none';
+        }
       });
     }
 
-    document.getElementById("region_id").addEventListener("change", function() {
+    document.getElementById("region_id").addEventListener("change", function () {
       const selectedRegionId = this.value;
       const videoContainer = document.getElementById("videoContainer");
       const videoFrame = document.getElementById("videoFrame");
@@ -81,15 +109,26 @@
           selectedRegionText.innerText = `Region: ${regionName}`;
         }
 
-        videoFrame.onerror = function() {
+        videoFrame.onerror = function () {
           console.error("Error loading video stream.");
           alert("Gagal memuat stream video. Silakan periksa server.");
+          clearInterval(detectInterval); // Hentikan interval jika stream gagal dimuat
         };
+
+        // Mulai deteksi wajah jika region dipilih
+        if (!detectInterval) {
+          detectInterval = setInterval(detectFaceAndSendAttendance, 10000); // Interval 10 detik
+        }
       } else {
         videoContainer.style.display = "none";
         videoFrame.src = "";
         if (selectedRegionText) {
           selectedRegionText.innerText = "Region: Not selected";
+        }
+
+        if (detectInterval) {
+          clearInterval(detectInterval);
+          detectInterval = null;
         }
       }
     });
@@ -107,23 +146,27 @@
       // Capture frame data from video
       const canvas = document.createElement("canvas");
       const context = canvas.getContext("2d");
-      canvas.width = videoFrame.width || 640;
-      canvas.height = videoFrame.height || 480;
+      canvas.width = 320; // Resolusi lebih kecil untuk mengurangi ukuran file
+      canvas.height = 240;
       context.drawImage(videoFrame, 0, 0, canvas.width, canvas.height);
-      const frameData = canvas.toDataURL("image/png");
 
-      // Simulasi pengenalan wajah
-      const employeeName = ""; // Ganti dengan hasil dari fungsi deteksi wajah
-      const employeeNameElem = document.getElementById('employee-name');
-      if (employeeNameElem) {
-        employeeNameElem.innerText = "Nama: " + employeeName;
+      // Kompres frame data
+      const frameData = canvas.toDataURL("image/jpeg", 0.5); // JPEG dengan kualitas 50%
+
+      // Validasi ukuran data frame
+      const maxSizeBytes = 2 * 1024 * 1024; // 2MB maksimum
+      const frameSize = atob(frameData.split(",")[1]).length;
+      if (frameSize > maxSizeBytes) {
+        console.error("Frame terlalu besar untuk dikirim ke server.");
+        const messageElem = document.getElementById('attendance-message');
+        if (messageElem) {
+          messageElem.innerText = "Ukuran frame terlalu besar, silakan coba lagi.";
+        }
+        return;
       }
 
       sendAttendanceData(frameData, regionId, employeeId);
     }
-
-    // Interval untuk deteksi wajah
-    setInterval(detectFaceAndSendAttendance, 10000); // Interval 10 detik
   });
 </script>
 {% endblock %}
