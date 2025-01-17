@@ -61,6 +61,10 @@ def process_attendance(request):
                 logging.info("Memasukkan pesan ke dalam speech_queue: Wajah tidak dikenali, silahkan coba lagi.")
             return render_template('attendance.html', message="Wajah tidak dikenali.")
 
+        if not roll.isdigit():  # Validasi roll untuk mencegah error SQL
+            logging.error(f"ID karyawan tidak valid: {roll}")
+            return render_template('attendance.html', message="ID karyawan tidak valid.")
+
         if not is_employee_active(roll):
             logging.info(f"Karyawan dengan ID {roll} tidak aktif. Absensi tidak disimpan.")
             return render_template('attendance.html', message="Karyawan tidak aktif.")
