@@ -95,7 +95,7 @@ def generate_marked_frames(selected_region_id):
                     if region_allowed or is_face_in_correct_region(roll, selected_region_id):
                         # Cek apakah karyawan sudah absen dalam durasi blokir terakhir di region ini
                         last_absence_time = get_last_absence_time(roll, selected_region_id)
-                        if last_absence_time and (datetime.now() - last_absence_time).total_seconds() < blocking_duration * 60:
+                        if last_absence_time and (datetime.datetime.now() - last_absence_time).total_seconds() < blocking_duration * 60:
                             if roll not in processed_employees:
                                 speech_queue.put("Akses diterima, terimakasih.")
                                 processed_employees.add(roll)

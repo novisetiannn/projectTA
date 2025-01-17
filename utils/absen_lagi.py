@@ -54,7 +54,7 @@ def bisa_absen_lagi(roll, region_id, blocking_duration=None):
             # Perbandingan langsung dengan timestamp (timestamp without time zone)
             if last_region_id == region_id:
                 # Mengecek apakah waktu absen sudah cukup
-                if (datetime.now() - last_check_in) < timedelta(minutes=blocking_duration):
+                if (datetime.datetime.now() - last_check_in) < timedelta(minutes=blocking_duration):
                     logging.info("Belum cukup waktu untuk absen kembali di region yang sama.")
                     return False
                 else:
