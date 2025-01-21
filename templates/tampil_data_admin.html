@@ -19,7 +19,7 @@ Tampil Data
   <h2 class="headline">Data Karyawan</h2>
 
   <!-- Form pencarian -->
-  <form method="GET" action="{{ url_for('tampil_data_adm.tampil_data_admin') }}">
+  <form method="GET" action="{{ url_for('tampil_data_adm.tampil_data_admin_view') }}">
     <input type="text" name="search" placeholder="Cari karyawan..." value="{{ request.args.get('search', '') }}">
     <button type="submit">Cari</button>
   </form>
