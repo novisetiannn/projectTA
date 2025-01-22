@@ -19,7 +19,7 @@ Tampil Data
   <h2 class="headline">Data Karyawan</h2>
 
   <!-- Form pencarian -->
-  <form method="GET" action="{{ url_for('tampil_data_adm.tampil_data_admin_view') }}">
+  <form method="GET" action="{{ url_for('tampil_data_adm.tampil_data_admin') }}">
     <input type="text" name="search" placeholder="Cari karyawan..." value="{{ request.args.get('search', '') }}">
     <button type="submit">Cari</button>
   </form>
@@ -40,8 +40,8 @@ Tampil Data
         <div class="col col-3" data-label="Nama Karyawan">{{ row[1] }}</div>
         <div class="col col-4" data-label="Region">{{ row[11] }}</div>
         <div class="col col-6" data-label="Aksi">
-          <a href="{{ url_for('update_employee_admin', id_karyawan=row[0]) }}">Edit</a>
-          <form action="{{ url_for('hps_karyawan_admin.hapus_karyawan_view', id_karyawan=row[0]) }}" method="POST" style="display:inline;">
+          <a href="{{ url_for('upd_employee_admin.update_employee_admin_view', id_karyawan=row[0]) }}">Edit</a>
+          <form action="{{ url_for('hps_karyawan_admin.hapus_karyawan_admin_view', id_karyawan=row[0]) }}" method="POST" style="display:inline;">
             <button type="submit">Hapus</button>
         </form>
         </div>
